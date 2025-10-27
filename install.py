@@ -71,6 +71,9 @@ def main():
 
     # Clone repo
     print("\nCloning repository...")
+    if os.path.exists("pos_system"):
+        import shutil
+        shutil.rmtree("pos_system")
     if not run_command(f"git clone {repo_url} pos_system"):
         sys.exit(1)
 
