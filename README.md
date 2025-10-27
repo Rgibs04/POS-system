@@ -15,9 +15,9 @@
 5. The installer will clone the repo, install dependencies, and set up the system.
 
 ### Windows
-1. Download the installer: `curl -O https://raw.githubusercontent.com/Rgibs04/POS-system/master/install_windows.py`
-2. Run `python install_windows.py` (installer will install Docker if needed).
-3. Follow the prompts (Docker only, default repo: https://github.com/Rgibs04/POS-system.git).
+1. Download the installer: `curl -O https://raw.githubusercontent.com/Rgibs04/POS-system/master/install_windows.bat`
+2. Run `install_windows.bat` (installer will automatically install Python, Docker, and Git if needed).
+3. Follow the prompts (Docker only).
 4. The installer will clone the repo and set up the system via Docker.
 
 ## Manual Server Setup (Ubuntu 22.04 Server)
