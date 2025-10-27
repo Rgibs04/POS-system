@@ -7,6 +7,7 @@ Pulls from GitHub and sets up the system.
 import os
 import subprocess
 import sys
+import shutil
 
 def run_command(cmd, cwd=None):
     """Run a shell command and return success."""
@@ -71,13 +72,12 @@ def main():
 
     # Clone repo
     print("\nCloning repository...")
-    if os.path.exists("pos_system"):
-        import shutil
-        shutil.rmtree("pos_system")
-    if not run_command(f"git clone {repo_url} pos_system"):
+    if os.path.exists("/srv/pos_system"):
+        shutil.rmtree("/srv/pos_system")
+    if not run_command(f"git clone {repo_url} /srv/pos_system"):
         sys.exit(1)
 
-    os.chdir("pos_system")
+    os.chdir("/srv/pos_system")
 
     # Check if directories exist
     if not os.path.exists("server") or not os.path.exists("kiosk"):
@@ -131,8 +131,8 @@ After=network.target
 [Service]
 Type=simple
 User=root
-WorkingDirectory=/root/pos_system/server
-ExecStart=/usr/bin/python3 /root/pos_system/server/app.py
+WorkingDirectory=/srv/pos_system/server
+ExecStart=/usr/bin/python3 /srv/pos_system/server/app.py
 Restart=always
 
 [Install]
@@ -158,8 +158,8 @@ After=network.target
 [Service]
 Type=simple
 User=root
-WorkingDirectory=/root/pos_system/kiosk
-ExecStart=/usr/bin/python3 /root/pos_system/kiosk/kiosk.py
+WorkingDirectory=/srv/pos_system/kiosk
+ExecStart=/usr/bin/python3 /srv/pos_system/kiosk/kiosk.py
 Restart=always
 
 [Install]
@@ -172,7 +172,7 @@ WantedBy=multi-user.target
             # Create desktop shortcut
             desktop_content = """[Desktop Entry]
 Name=POS Kiosk
-Exec=/usr/bin/python3 /root/pos_system/kiosk/kiosk.py
+Exec=/usr/bin/python3 /srv/pos_system/kiosk/kiosk.py
 Type=Application
 Terminal=false
 """
