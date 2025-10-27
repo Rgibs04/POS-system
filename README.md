@@ -1,5 +1,11 @@
 # POS System
 
+## Uploading to GitHub
+1. Create a new repository on GitHub (e.g., https://github.com/username/pos-system).
+2. In your local terminal, navigate to the pos_system folder.
+3. Run: `git remote add origin https://github.com/username/pos-system.git`
+4. Run: `git push -u origin master`
+
 ## Quick Install (Interactive)
 ### Linux (Ubuntu/Debian)
 1. Ensure Python3 and pip are installed: `sudo apt update && sudo apt install -y python3 python3-pip`.
