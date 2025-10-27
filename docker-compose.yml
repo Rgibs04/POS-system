@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  pos-server:
+    build: ./server
+    ports:
+      - "5000:5000"
+      - "5001:5001/udp"
+    volumes:
+      - ./server/instance:/app/instance
+    environment:
+      - FLASK_ENV=development
+
+  pos-kiosk:
+    build: ./kiosk
+    depends_on:
+      - pos-server
+    environment:
+      - DISPLAY=:0
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix
+    network_mode: host  # For X11 forwarding on Linux
