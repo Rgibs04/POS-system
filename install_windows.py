@@ -52,6 +52,17 @@ def main():
             print("Please install Git manually from https://git-scm.com/download/win")
             sys.exit(1)
 
+    # Ask what to install
+    print("\nWhat to install:")
+    print("1. Server only")
+    print("2. Kiosk only")
+    print("3. Both")
+    install_choice = input("Choose (1, 2, or 3): ").strip()
+
+    if install_choice not in ['1', '2', '3']:
+        print("Invalid choice.")
+        sys.exit(1)
+
     # Ask for repo URL
     repo_url = input("Enter the GitHub repository URL (default: https://github.com/Rgibs04/POS-system.git): ").strip()
     if not repo_url:
@@ -65,13 +76,27 @@ def main():
     os.chdir("pos_system")
 
     # Docker setup
-    print("Building and starting with Docker...")
-    if not run_command("docker-compose up --build -d"):
-        sys.exit(1)
-
-    print("\nInstallation complete!")
-    print("Access server web UI at http://localhost (admin/admin)")
-    print("Kiosk is running in container.")
+    if install_choice == '1':
+        # Server only
+        print("Building and starting server with Docker...")
+        if not run_command("docker build -t pos-server server/ && docker run -d -p 5000:5000 --name pos-server pos-server"):
+            sys.exit(1)
+        print("\nServer installation complete!")
+        print("Access server web UI at http://localhost:5000 (admin/admin)")
+    elif install_choice == '2':
+        # Kiosk only
+        print("Building and starting kiosk with Docker...")
+        if not run_command("docker build -t pos-kiosk kiosk/ && docker run -d --name pos-kiosk pos-kiosk"):
+            sys.exit(1)
+        print("\nKiosk installation complete!")
+    else:
+        # Both
+        print("Building and starting with Docker...")
+        if not run_command("docker-compose up --build -d"):
+            sys.exit(1)
+        print("\nInstallation complete!")
+        print("Access server web UI at http://localhost (admin/admin)")
+        print("Kiosk is running in container.")
 
 if __name__ == "__main__":
     main()
