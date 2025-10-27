@@ -70,6 +70,11 @@ def main():
 
     os.chdir("pos_system")
 
+    # Check if directories exist
+    if not os.path.exists("server") or not os.path.exists("kiosk"):
+        print("Error: Repository clone failed or incomplete. Please check the repo URL and ensure the repository is public.")
+        sys.exit(1)
+
     if install_type == 'docker':
         # Docker install
         print("Installing Docker and Docker Compose...")
