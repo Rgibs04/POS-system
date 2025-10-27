@@ -9,15 +9,15 @@
 ## Quick Install (Interactive)
 ### Linux (Ubuntu/Debian)
 1. Ensure Python3 and pip are installed: `sudo apt update && sudo apt install -y python3 python3-pip`.
-2. Download `install.py` from the repository.
+2. Download the installer: `curl -O https://raw.githubusercontent.com/Rgibs04/POS-system/master/install.py`
 3. Run `python3 install.py` (installer will check and install additional dependencies if needed).
-4. Follow the prompts to choose Docker or native install.
+4. Follow the prompts to choose Docker or native install (default: native).
 5. The installer will clone the repo, install dependencies, and set up the system.
 
 ### Windows
-1. Download `install_windows.py` from the repository.
+1. Download the installer: `curl -O https://raw.githubusercontent.com/Rgibs04/POS-system/master/install_windows.py`
 2. Run `python install_windows.py` (installer will install Docker if needed).
-3. Follow the prompts (Docker only).
+3. Follow the prompts (Docker only, default repo: https://github.com/Rgibs04/POS-system.git).
 4. The installer will clone the repo and set up the system via Docker.
 
 ## Manual Server Setup (Ubuntu 22.04 Server)

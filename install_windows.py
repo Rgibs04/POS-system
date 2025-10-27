@@ -53,10 +53,9 @@ def main():
             sys.exit(1)
 
     # Ask for repo URL
-    repo_url = input("Enter the GitHub repository URL (e.g., https://github.com/username/pos-system): ").strip()
+    repo_url = input("Enter the GitHub repository URL (default: https://github.com/Rgibs04/POS-system.git): ").strip()
     if not repo_url:
-        print("Repository URL is required.")
-        sys.exit(1)
+        repo_url = "https://github.com/Rgibs04/POS-system.git"
 
     # Clone repo
     print("\nCloning repository...")
