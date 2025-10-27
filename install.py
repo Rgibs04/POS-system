@@ -74,8 +74,10 @@ def main():
     print("\nCloning repository...")
     if os.path.exists("/srv/pos_system"):
         shutil.rmtree("/srv/pos_system")
-    if not run_command(f"git clone {repo_url} /srv/pos_system"):
-        sys.exit(1)
+    if not run_command(f"git clone --depth 1 {repo_url} /srv/pos_system"):
+        print("Git clone failed. Trying without depth...")
+        if not run_command(f"git clone {repo_url} /srv/pos_system"):
+            sys.exit(1)
 
     os.chdir("/srv/pos_system")
 
