@@ -21,6 +21,12 @@ def main():
     print("POS System Interactive Installer")
     print("================================")
 
+    # Check if running in virtual environment
+    if hasattr(sys, 'real_prefix') or (hasattr(sys, 'base_prefix') and sys.base_prefix != sys.prefix):
+        print("Error: This installer must be run outside of a virtual environment.")
+        print("Please deactivate your virtual environment and run the installer again.")
+        sys.exit(1)
+
     # Install Python if needed
     print("Checking for Python3 and pip...")
     if not run_command("python3 --version"):
