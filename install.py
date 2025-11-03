@@ -8,6 +8,7 @@ import os
 import subprocess
 import sys
 import shutil
+import platform
 
 def run_command(cmd, cwd=None):
     """Run a shell command and return success."""
@@ -18,9 +19,37 @@ def run_command(cmd, cwd=None):
         print(f"Error running command: {e}")
         return False
 
+def detect_os():
+    """Detect the operating system."""
+    if os.path.exists('/etc/os-release'):
+        with open('/etc/os-release', 'r') as f:
+            content = f.read()
+            if 'ID=ubuntu' in content or 'ID=debian' in content:
+                return 'debian'
+            elif 'ID=arch' in content or 'ID=manjaro' in content:
+                return 'arch'
+    return 'unknown'
+
+def install_package(pkg, os_type):
+    """Install a package using the appropriate package manager."""
+    if os_type == 'debian':
+        return run_command(f"sudo apt update && sudo apt install -y {pkg}")
+    elif os_type == 'arch':
+        if run_command("which yay"):
+            return run_command(f"yay -S --noconfirm {pkg}")
+        else:
+            return run_command(f"sudo pacman -S --noconfirm {pkg}")
+    return False
+
 def main():
     print("POS System Interactive Installer")
     print("================================")
+
+    os_type = detect_os()
+    if os_type == 'unknown':
+        print("Unsupported OS. This installer supports Debian/Ubuntu and Arch-based systems.")
+        sys.exit(1)
+    print(f"Detected OS: {os_type}")
 
     # Check if running in virtual environment
     if hasattr(sys, 'real_prefix') or (hasattr(sys, 'base_prefix') and sys.base_prefix != sys.prefix):
@@ -32,15 +61,20 @@ def main():
     print("Checking for Python3 and pip...")
     if not run_command("python3 --version"):
         print("Installing Python3...")
-        if not run_command("sudo apt update && sudo apt install -y python3 python3-pip"):
+        if not install_package("python python-pip", os_type):
             sys.exit(1)
     else:
         print("Python3 found.")
 
-    # Ask for repo URL
-    repo_url = input("Enter the GitHub repository URL (default: https://github.com/Rgibs04/POS-system.git): ").strip()
-    if not repo_url:
-        repo_url = "https://github.com/Rgibs04/POS-system.git"
+    # Ask if to skip git clone
+    skip_clone = input("Skip git clone? (y/n, default: n): ").strip().lower() == 'y'
+
+    repo_url = ""
+    if not skip_clone:
+        # Ask for repo URL
+        repo_url = input("Enter the GitHub repository URL (default: https://github.com/Rgibs04/POS-system.git): ").strip()
+        if not repo_url:
+            repo_url = "https://github.com/Rgibs04/POS-system.git"
 
     # Ask what to install
     print("\nWhat to install:")
@@ -60,7 +94,7 @@ def main():
         # Ask for installation type
         print("\nInstallation Options:")
         print("1. Docker (recommended for cross-platform)")
-        print("2. Native (Ubuntu only)")
+        print("2. Native")
         choice = input("Choose installation type (1 or 2): ").strip()
         if choice == '1':
             install_type = 'docker'
@@ -70,26 +104,32 @@ def main():
             print("Invalid choice.")
             sys.exit(1)
 
-    # Clone repo
-    print("\nCloning repository...")
-    if os.path.exists("/srv/pos_system"):
-        shutil.rmtree("/srv/pos_system")
-    if not run_command(f"git clone --depth 1 {repo_url} /srv/pos_system"):
-        print("Git clone failed. Trying without depth...")
-        if not run_command(f"git clone {repo_url} /srv/pos_system"):
+    if not skip_clone:
+        # Clone repo
+        print("\nCloning repository...")
+        if os.path.exists("/srv/pos_system"):
+            shutil.rmtree("/srv/pos_system")
+        if not run_command(f"git clone --depth 1 {repo_url} /srv/pos_system"):
+            print("Git clone failed. Trying without depth...")
+            if not run_command(f"git clone {repo_url} /srv/pos_system"):
+                sys.exit(1)
+
+        os.chdir("/srv/pos_system")
+
+        # Check if directories exist
+        if not os.path.exists("server") or not os.path.exists("kiosk"):
+            print("Error: Repository clone failed or incomplete. Please check the repo URL and ensure the repository is public.")
             sys.exit(1)
-
-    os.chdir("/srv/pos_system")
-
-    # Check if directories exist
-    if not os.path.exists("server") or not os.path.exists("kiosk"):
-        print("Error: Repository clone failed or incomplete. Please check the repo URL and ensure the repository is public.")
-        sys.exit(1)
+    else:
+        # Assume current directory is the repo
+        if not os.path.exists("server") or not os.path.exists("kiosk"):
+            print("Error: server/ and kiosk/ directories not found. Please run from the repository root or don't skip clone.")
+            sys.exit(1)
 
     if install_type == 'docker':
         # Docker install
         print("Installing Docker and Docker Compose...")
-        if not run_command("sudo apt update && sudo apt install -y docker.io docker-compose"):
+        if not install_package("docker docker-compose", os_type):
             sys.exit(1)
         if install_choice == '1':
             # Server only
@@ -116,7 +156,7 @@ def main():
     elif install_type == 'native':
         # Native install
         print("Installing Python and dependencies...")
-        if not run_command("sudo apt update && sudo apt install -y python3 python3-pip"):
+        if not install_package("python python-pip", os_type):
             sys.exit(1)
 
         if install_choice == '1' or install_choice == '3':

@@ -5,21 +5,26 @@ REM Automatically installs everything needed
 echo POS System Windows Installer
 echo =============================
 
+REM Check for winget
+winget --version >nul 2>&1
+if %errorlevel% neq 0 (
+    echo winget not found. Installing winget...
+    REM winget is part of App Installer, try to install it
+    echo Please install winget manually from Microsoft Store or GitHub releases.
+    echo Then rerun this installer.
+    pause
+    exit /b 1
+) else (
+    echo winget found.
+)
+
 REM Check for Python
 python --version >nul 2>&1
 if %errorlevel% neq 0 (
     echo Python not found. Installing Python...
-    REM Try winget
-    winget --version >nul 2>&1
-    if %errorlevel% equ 0 (
-        winget install --id Python.Python.3 --accept-source-agreements --accept-package-agreements
-        if %errorlevel% neq 0 (
-            echo Failed to install Python via winget. Please install Python manually from https://www.python.org/downloads/
-            pause
-            exit /b 1
-        )
-    ) else (
-        echo winget not found. Please install Python manually from https://www.python.org/downloads/
+    winget install --id Python.Python.3 --accept-source-agreements --accept-package-agreements
+    if %errorlevel% neq 0 (
+        echo Failed to install Python via winget. Please install Python manually from https://www.python.org/downloads/
         pause
         exit /b 1
     )

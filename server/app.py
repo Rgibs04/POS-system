@@ -180,7 +180,8 @@ def discover():
 
 if __name__ == '__main__':
     try:
-        db.create_all()
+        with app.app_context():
+            db.create_all()
         logger.info("Database initialized")
         ip = get_local_ip()
         logger.info(f"Server starting on {ip}:5000")
