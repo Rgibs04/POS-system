@@ -41,6 +41,17 @@ def install_package(pkg, os_type):
             return run_command(f"sudo pacman -S --noconfirm {pkg}")
     return False
 
+def install_docker(os_type):
+    """Install Docker specifically."""
+    if os_type == 'debian':
+        return run_command("sudo apt update && sudo apt install -y docker.io docker-compose")
+    elif os_type == 'arch':
+        if run_command("which yay"):
+            return run_command("yay -S --noconfirm docker docker-compose")
+        else:
+            return run_command("sudo pacman -S --noconfirm docker docker-compose")
+    return False
+
 def main():
     print("POS System Interactive Installer")
     print("================================")
@@ -129,7 +140,7 @@ def main():
     if install_type == 'docker':
         # Docker install
         print("Installing Docker and Docker Compose...")
-        if not install_package("docker docker-compose", os_type):
+        if not install_docker(os_type):
             sys.exit(1)
         if install_choice == '1':
             # Server only

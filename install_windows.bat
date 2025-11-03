@@ -39,17 +39,9 @@ REM Check for Docker
 docker --version >nul 2>&1
 if %errorlevel% neq 0 (
     echo Docker not found. Installing Docker Desktop...
-    REM Try winget
-    winget --version >nul 2>&1
-    if %errorlevel% equ 0 (
-        winget install --id Docker.DockerDesktop --accept-source-agreements --accept-package-agreements
-        if %errorlevel% neq 0 (
-            echo Failed to install Docker via winget. Please install Docker Desktop manually from https://www.docker.com/products/docker-desktop
-            pause
-            exit /b 1
-        )
-    ) else (
-        echo winget not found. Please install Docker Desktop manually from https://www.docker.com/products/docker-desktop
+    winget install --id Docker.DockerDesktop --accept-source-agreements --accept-package-agreements
+    if %errorlevel% neq 0 (
+        echo Failed to install Docker via winget. Please install Docker Desktop manually from https://www.docker.com/products/docker-desktop
         pause
         exit /b 1
     )
@@ -64,10 +56,8 @@ REM Check for git
 git --version >nul 2>&1
 if %errorlevel% neq 0 (
     echo Git not found. Installing Git...
-    winget --version >nul 2>&1
-    if %errorlevel% equ 0 (
-        winget install --id Git.Git --accept-source-agreements --accept-package-agreements
-    ) else (
+    winget install --id Git.Git --accept-source-agreements --accept-package-agreements
+    if %errorlevel% neq 0 (
         echo Please install Git manually from https://git-scm.com/download/win
         pause
         exit /b 1
